@@ -101,7 +101,7 @@ namespace Plugin.BLE.iOS
 
                 foundDevice = foundDevice ?? new Device(this, e.Peripheral);
 
-                //make sure all cached services are cleared
+                //make sure all cached services are cleared this will also clear characteristics and descriptors implicitly
                 ((Device)foundDevice).ClearServices();
 
                 HandleDisconnectedDevice(isNormalDisconnect, foundDevice);
@@ -158,22 +158,22 @@ namespace Plugin.BLE.iOS
             _centralManager.StopScan();
         }
 
-        protected override Task ConnectToDeviceNativeAsync(IDevice device, bool autoconnect, CancellationToken cancellationToken)
+        protected override Task ConnectToDeviceNativeAsync(IDevice device, ConnectParameters connectParameters, CancellationToken cancellationToken)
         {
-            if (autoconnect)
+            if (connectParameters.AutoConnect)
             {
                 Trace.Message("Warning: Autoconnect is not supported in iOS");
             }
 
             _deviceOperationRegistry[device.Id.ToString()] = device;
 
-            if (cancellationToken != CancellationToken.None)
+            // this is dirty: We should not assume, AdapterBase is doing the cleanup for us...
+            // move ConnectToDeviceAsync() code to native implementations.
+            cancellationToken.Register(() =>
             {
-                cancellationToken.Register(() =>
-                {
-                    _centralManager.CancelPeripheralConnection(device.NativeDevice as CBPeripheral);
-                });
-            }
+                Trace.Message("Canceling the connect attempt");
+                _centralManager.CancelPeripheralConnection(device.NativeDevice as CBPeripheral);
+            });
 
             _centralManager.ConnectPeripheral(device.NativeDevice as CBPeripheral,
                 new PeripheralConnectionOptions());
@@ -194,7 +194,7 @@ namespace Plugin.BLE.iOS
         /// </summary>
         /// <returns>The to known device async.</returns>
         /// <param name="deviceGuid">Device GUID.</param>
-        public override async Task<IDevice> ConnectToKnownDeviceAsync(Guid deviceGuid, CancellationToken cancellationToken = default(CancellationToken))
+        public override async Task<IDevice> ConnectToKnownDeviceAsync(Guid deviceGuid, ConnectParameters connectParameters = default(ConnectParameters), CancellationToken cancellationToken = default(CancellationToken))
         {
             // Wait for the PoweredOn state
             await WaitForState(CBCentralManagerState.PoweredOn, cancellationToken, true);
@@ -202,7 +202,7 @@ namespace Plugin.BLE.iOS
             if (cancellationToken.IsCancellationRequested)
                 throw new TaskCanceledException("ConnectToKnownDeviceAsync cancelled");
 
-            //ToDo attempted to use tobyte array insetead of string but there was a roblem with byte ordering Guid->NSUui
+            //FYI attempted to use tobyte array insetead of string but there was a problem with byte ordering Guid->NSUui
             var uuid = new NSUuid(deviceGuid.ToString());
 
             Trace.Message($"[Adapter] Attempting connection to {uuid.ToString()}");
@@ -224,7 +224,7 @@ namespace Plugin.BLE.iOS
 
             var device = new Device(this, peripherial, peripherial.Name, peripherial.RSSI?.Int32Value ?? 0, new List<AdvertisementRecord>());
 
-            await ConnectToDeviceAsync(device, false, cancellationToken);
+            await ConnectToDeviceAsync(device, connectParameters, cancellationToken);
             return device;
         }
 
@@ -234,7 +234,7 @@ namespace Plugin.BLE.iOS
             if (services != null)
             {
                 serviceUuids = services.Select(guid => CBUUID.FromString(guid.ToString())).ToArray();
-            }           
+            }
 
             var nativeDevices = _centralManager.RetrieveConnectedPeripherals(serviceUuids);
 
@@ -299,12 +299,12 @@ namespace Plugin.BLE.iOS
                 }
                 else if (key == CBAdvertisement.DataTxPowerLevelKey)
                 {
-	                //iOS stores TxPower as NSNumber. Get int value of number and convert it into a signed Byte
-	                //TxPower has a range from -100 to 20 which can fit into a single signed byte (-128 to 127)
-	                sbyte byteValue = Convert.ToSByte(((NSNumber)advertisementData.ObjectForKey(key)).Int32Value);
-	                //add our signed byte to a new byte array and return it (same parsed value as android returns)
-	                byte[] arr = { (byte)byteValue };
-	                records.Add(new AdvertisementRecord(AdvertisementRecordType.TxPowerLevel, arr));
+                    //iOS stores TxPower as NSNumber. Get int value of number and convert it into a signed Byte
+                    //TxPower has a range from -100 to 20 which can fit into a single signed byte (-128 to 127)
+                    sbyte byteValue = Convert.ToSByte(((NSNumber)advertisementData.ObjectForKey(key)).Int32Value);
+                    //add our signed byte to a new byte array and return it (same parsed value as android returns)
+                    byte[] arr = { (byte)byteValue };
+                    records.Add(new AdvertisementRecord(AdvertisementRecordType.TxPowerLevel, arr));
                 }
                 else if (key == CBAdvertisement.DataServiceDataKey)
                 {
@@ -336,9 +336,16 @@ namespace Plugin.BLE.iOS
                         records.Add(new AdvertisementRecord(AdvertisementRecordType.ServiceData, arr));
                     }
                 }
+                else if (key == CBAdvertisement.IsConnectable)
+                {
+                    // A Boolean value that indicates whether the advertising event type is connectable.
+                    // The value for this key is an NSNumber object. You can use this value to determine whether a peripheral is connectable at a particular moment.
+                    records.Add(new AdvertisementRecord(AdvertisementRecordType.IsConnectable,
+                                                        new byte[] { ((NSNumber)advertisementData.ObjectForKey(key)).ByteValue }));
+                }
                 else
                 {
-                    Trace.Message("Parsing Advertisement: Ignoring Advertisement entry for key {0}, since we don't know how to parse it yet",
+                    Trace.Message("Parsing Advertisement: Ignoring Advertisement entry for key {0}, since we don't know how to parse it yet. Maybe you can open a Pull Request and implement it ;)",
                         key.ToString());
                 }
             }

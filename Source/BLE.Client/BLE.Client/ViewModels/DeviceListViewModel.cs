@@ -12,6 +12,7 @@ using Plugin.BLE.Abstractions;
 using Plugin.BLE.Abstractions.Contracts;
 using Plugin.BLE.Abstractions.EventArgs;
 using Plugin.BLE.Abstractions.Extensions;
+using Plugin.Permissions.Abstractions;
 using Plugin.Settings.Abstractions;
 
 namespace BLE.Client.ViewModels
@@ -66,9 +67,12 @@ namespace BLE.Client.ViewModels
             RaisePropertyChanged(() => IsRefreshing);
         }, () => _cancellationTokenSource != null);
 
-        public DeviceListViewModel(IBluetoothLE bluetoothLe, IAdapter adapter, IUserDialogs userDialogs, ISettings settings) : base(adapter)
+		readonly IPermissions _permissions;
+
+		public DeviceListViewModel(IBluetoothLE bluetoothLe, IAdapter adapter, IUserDialogs userDialogs, ISettings settings, IPermissions permissions) : base(adapter)
         {
-            _bluetoothLe = bluetoothLe;
+			_permissions = permissions;
+			_bluetoothLe = bluetoothLe;
             _userDialogs = userDialogs;
             _settings = settings;
             // quick and dirty :>
@@ -77,6 +81,8 @@ namespace BLE.Client.ViewModels
             Adapter.ScanTimeoutElapsed += Adapter_ScanTimeoutElapsed;
             Adapter.DeviceDisconnected += OnDeviceDisconnected;
             Adapter.DeviceConnectionLost += OnDeviceConnectionLost;
+			//Adapter.DeviceConnected += (sender, e) => Adapter.DisconnectDeviceAsync(e.Device);
+
         }
 
         private Task GetPreviousGuidAsync()
@@ -163,7 +169,7 @@ namespace BLE.Client.ViewModels
 
             GetSystemConnectedOrPairedDevices();
 
-        }  
+        }
 
         private void GetSystemConnectedOrPairedDevices()
         {
@@ -172,7 +178,13 @@ namespace BLE.Client.ViewModels
                 //heart rate
                 var guid = Guid.Parse("0000180d-0000-1000-8000-00805f9b34fb");
 
-                SystemDevices = Adapter.GetSystemConnectedOrPairedDevices(new[] { guid }).Select(d => new DeviceListItemViewModel(d)).ToList();
+                // SystemDevices = Adapter.GetSystemConnectedOrPairedDevices(new[] { guid }).Select(d => new DeviceListItemViewModel(d)).ToList();
+                // remove the GUID filter for test
+                // Avoid to loose already IDevice with a connection, otherwise you can't close it
+                // Keep the reference of already known devices and drop all not in returned list.
+                var pairedOrConnectedDeviceWithNullGatt = Adapter.GetSystemConnectedOrPairedDevices();
+                SystemDevices.RemoveAll(sd => !pairedOrConnectedDeviceWithNullGatt.Any(p => p.Id == sd.Id));
+                SystemDevices.AddRange(pairedOrConnectedDeviceWithNullGatt.Where(d=>!SystemDevices.Any(sd=>sd.Id == d.Id)).Select(d => new DeviceListItemViewModel(d)));
                 RaisePropertyChanged(() => SystemDevices);
             }
             catch (Exception ex)
@@ -181,7 +193,7 @@ namespace BLE.Client.ViewModels
             }
         }
 
-        public List<DeviceListItemViewModel> SystemDevices { get; private set; }
+        public List<DeviceListItemViewModel> SystemDevices { get; private set; } = new List<DeviceListItemViewModel>();
 
         public override void Suspend()
         {
@@ -191,8 +203,23 @@ namespace BLE.Client.ViewModels
             RaisePropertyChanged(() => IsRefreshing);
         }
 
-        private void TryStartScanning(bool refresh = false)
+        private async void TryStartScanning(bool refresh = false)
         {
+			if (Xamarin.Forms.Device.OS == Xamarin.Forms.TargetPlatform.Android)
+			{
+				var status = await _permissions.CheckPermissionStatusAsync(Permission.Location);
+				if (status != PermissionStatus.Granted)
+				{
+					var permissionResult = await _permissions.RequestPermissionsAsync(Permission.Location);
+
+					if (permissionResult.First().Value != PermissionStatus.Granted)
+					{
+						_userDialogs.ShowError("Permission denied. Not scanning.");
+						return;
+					}
+				}
+			}
+			
             if (IsStateOn && (refresh || !Devices.Any()) && !IsRefreshing)
             {
                 ScanForDevices();
@@ -222,8 +249,9 @@ namespace BLE.Client.ViewModels
             _cancellationTokenSource = new CancellationTokenSource();
             RaisePropertyChanged(() => StopScanCommand);
 
-            Adapter.StartScanningForDevicesAsync(_cancellationTokenSource.Token);
             RaisePropertyChanged(() => IsRefreshing);
+            Adapter.ScanMode = ScanMode.LowLatency;
+            await Adapter.StartScanningForDevicesAsync(_cancellationTokenSource.Token);
         }
 
         private void CleanupCancellationToken()
@@ -290,13 +318,13 @@ namespace BLE.Client.ViewModels
                 {
                     progress.Show();
 
-                    await Adapter.ConnectToDeviceAsync(device.Device, tokenSource.Token);
+                    await Adapter.ConnectToDeviceAsync(device.Device, new ConnectParameters(forceBleTransport: false), tokenSource.Token);
                 }
 
                 _userDialogs.ShowSuccess($"Connected to {device.Device.Name}.");
 
                 PreviousGuid = device.Device.Id;
-                return true;
+				return true;
 
             }
             catch (Exception ex)
@@ -334,7 +362,7 @@ namespace BLE.Client.ViewModels
                 {
                     progress.Show();
 
-                    device = await Adapter.ConnectToKnownDeviceAsync(PreviousGuid, tokenSource.Token);
+                    device = await Adapter.ConnectToKnownDeviceAsync(PreviousGuid, new ConnectParameters(forceBleTransport:true), tokenSource.Token);
 
                 }
 
@@ -371,6 +399,11 @@ namespace BLE.Client.ViewModels
                 {
                     _userDialogs.ShowLoading($"Connecting to {item.Name} ...");
                     await Adapter.ConnectToDeviceAsync(item.Device);
+
+                    // TODO make this configurable
+                    var resultMTU = await item.Device.RequestMtuAsync(60);
+                    System.Diagnostics.Debug.WriteLine($"Requested MTU. Result is {resultMTU}");
+
                     item.Update();
                     _userDialogs.ShowSuccess($"Connected {item.Device.Name}");
 

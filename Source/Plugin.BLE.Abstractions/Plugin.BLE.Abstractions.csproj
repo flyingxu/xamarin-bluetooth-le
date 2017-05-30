@@ -42,6 +42,7 @@
     <Compile Include="CharacteristicBase.cs" />
     <Compile Include="CharacteristicPropertyType.cs" />
     <Compile Include="BleImplementationBase.cs" />
+    <Compile Include="ConnectParameter.cs" />
     <Compile Include="Contracts\BluetoothState.cs" />
     <Compile Include="Contracts\IAdapter.cs" />
     <Compile Include="Contracts\IBluetoothLE.cs" />
@@ -49,6 +50,7 @@
     <Compile Include="Contracts\IDescriptor.cs" />
     <Compile Include="Contracts\IDevice.cs" />
     <Compile Include="Contracts\IService.cs" />
+    <Compile Include="Contracts\ScanMode.cs" />
     <Compile Include="DescriptorBase.cs" />
     <Compile Include="DeviceBase.cs" />
     <Compile Include="DeviceBondState.cs" />
