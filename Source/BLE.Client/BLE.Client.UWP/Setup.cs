@@ -1,18 +1,38 @@
-﻿using Windows.UI.Xaml.Controls;
+﻿using Windows.ApplicationModel.Activation;
+using Windows.UI.Xaml.Controls;
 using MvvmCross.Core.ViewModels;
-using MvvmCross.WindowsUWP.Platform;
+using MvvmCross.Forms.Uwp.Presenters;
+using MvvmCross.Platform;
+using MvvmCross.Uwp.Platform;
+using MvvmCross.Uwp.Views;
+using BLE.Client;
+using MvvmCross.Core.Views;
 
 namespace BLE.Client.UWP
 {
     public class Setup : MvxWindowsSetup
     {
-        public Setup(Frame rootFrame) : base(rootFrame)
+        private readonly LaunchActivatedEventArgs _launchActivatedEventArgs;
+
+        public Setup(Frame rootFrame, LaunchActivatedEventArgs e) : base(rootFrame)
         {
+            _launchActivatedEventArgs = e;
         }
 
         protected override IMvxApplication CreateApp()
         {
-            return new BleMvxApplication();
+            return new BleMvxApplication();            
+        }
+
+        protected override IMvxWindowsViewPresenter CreateViewPresenter(IMvxWindowsFrame rootFrame)
+        {
+            Xamarin.Forms.Forms.Init(_launchActivatedEventArgs);
+
+            var presenter = new MvxFormsUwpPagePresenter(rootFrame, new BleMvxFormsApp());
+            Mvx.RegisterSingleton<IMvxViewPresenter>(presenter);
+
+            return presenter;
+            //return base.CreateViewPresenter(rootFrame);
         }
     }
 }

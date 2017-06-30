@@ -1,9 +1,9 @@
-﻿using MvvmCross.Forms.Presenter.Core;
-using MvvmCross.Platform;
+﻿using MvvmCross.Platform;
+using MvvmCross.Forms.Core;
 
 namespace BLE.Client
 {
-    public partial class BleMvxFormsApp : MvxFormsApp
+    public partial class BleMvxFormsApp : MvxFormsApplication
     {
         public BleMvxFormsApp()
         {

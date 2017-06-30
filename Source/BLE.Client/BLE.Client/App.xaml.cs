@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
+using BLE.Client.Pages;
 using Xamarin.Forms;
 
 namespace BLE.Client
@@ -12,8 +12,6 @@ namespace BLE.Client
         public App()
         {
             InitializeComponent();
-
-            MainPage = new BLE.Client.MainPage();
         }
 
         protected override void OnStart()

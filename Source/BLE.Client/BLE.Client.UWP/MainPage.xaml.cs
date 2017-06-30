@@ -12,6 +12,10 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using MvvmCross.Core.ViewModels;
+using MvvmCross.Core.Views;
+using MvvmCross.Forms.Uwp.Presenters;
+using MvvmCross.Platform;
 
 namespace BLE.Client.UWP
 {
@@ -21,7 +25,11 @@ namespace BLE.Client.UWP
         {
             this.InitializeComponent();
 
-            LoadApplication(new BLE.Client.App());
+            var start = Mvx.Resolve<IMvxAppStart>();
+            start.Start();
+
+            var presenter = Mvx.Resolve<IMvxViewPresenter>() as MvxFormsUwpPagePresenter;
+            LoadApplication(presenter.MvxFormsApp);
         }
     }
 }
