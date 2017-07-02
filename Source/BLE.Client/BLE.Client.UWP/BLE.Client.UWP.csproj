@@ -96,6 +96,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Bootstrap\BlePluginBootstrap.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
@@ -153,6 +154,14 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\MvvmCross.Plugins.BLE.UWP\MvvmCross.Plugins.BLE.UWP.csproj">
+      <Project>{35305715-7e80-4624-bf7b-86edf16ddca5}</Project>
+      <Name>MvvmCross.Plugins.BLE.UWP</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\MvvmCross.Plugins.BLE\MvvmCross.Plugins.BLE.csproj">
+      <Project>{83f1dffb-a653-45dd-be81-c02374c6db07}</Project>
+      <Name>MvvmCross.Plugins.BLE</Name>
+    </ProjectReference>
     <ProjectReference Include="..\BLE.Client\BLE.Client.csproj">
       <Project>{09211511-0e2c-4b12-bd76-992a9e4b7351}</Project>
       <Name>BLE.Client</Name>
