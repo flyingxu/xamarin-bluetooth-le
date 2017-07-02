@@ -10,7 +10,7 @@ UWP app runs with the framework, Bluetooth is always _not available_.
  
  The code is based on that version, please check your Windows 10 version.
  
- ![Windows 10 version 1703](Windows 10 Creater Update.PNG "UWP")
+ ![Windows 10 version 1703]("Windows 10 Creater Update.PNG" "UWP")
  
 ```     
 <TargetPlatformVersion>10.0.15063.0</TargetPlatformVersion>
