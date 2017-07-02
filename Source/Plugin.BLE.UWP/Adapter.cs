@@ -20,11 +20,18 @@ namespace Plugin.BLE.UWP
 
         private ObservableCollection<DeviceInformation> ResultCollection = new ObservableCollection<DeviceInformation>();
 
-        public override IList<IDevice> ConnectedDevices => throw new NotImplementedException();
+        public override IList<IDevice> ConnectedDevices => ConnectedDeviceRegistry.Values.ToList();
+
+        /// <summary>
+        /// Used to store all connected devices
+        /// </summary>
+        public Dictionary<string, IDevice> ConnectedDeviceRegistry { get; }
 
         public Adapter(BluetoothAdapter bluetoothAdapter)
         {
             _bluetoothAdapter = bluetoothAdapter;
+
+            ConnectedDeviceRegistry = new Dictionary<string, IDevice>();
         }
 
         public override Task<IDevice> ConnectToKnownDeviceAsync(Guid deviceGuid, ConnectParameters connectParameters = default(ConnectParameters), CancellationToken cancellationToken = default(CancellationToken))
@@ -77,48 +84,59 @@ namespace Plugin.BLE.UWP
 
         protected override void StopScanNative()
         {
-            throw new NotImplementedException();
+            if (deviceWatcher != null)
+            {
+                // Unregister the event handlers.
+                deviceWatcher.Added -= DeviceWatcher_Added;
+                deviceWatcher.Updated -= DeviceWatcher_Updated;
+                deviceWatcher.Removed -= DeviceWatcher_Removed;
+                deviceWatcher.EnumerationCompleted -= DeviceWatcher_EnumerationCompleted;
+                deviceWatcher.Stopped -= DeviceWatcher_Stopped;
+
+                // Stop the watcher.
+                deviceWatcher.Stop();
+                deviceWatcher = null;
+            }
         }
 
 
         private async void DeviceWatcher_Added(DeviceWatcher sender, DeviceInformation deviceInfo)
         {
-                // Protect against race condition if the task runs after the app stopped the deviceWatcher.
-                if (sender == deviceWatcher)
-                {
-                    // Make sure device name isn't blank or already present in the list.
-                    if (deviceInfo.Name != string.Empty && FindBluetoothLEDeviceDisplay(deviceInfo.Id) == null)
-                    {
-                        //ResultCollection.Add(new BluetoothLEDeviceDisplay(deviceInfo));
-                    }
-                }
+            // Protect against race condition if the task runs after the app stopped the deviceWatcher.
+            if (sender == deviceWatcher)
+            {
+                //var bluetoothDevice = await BluetoothLEDevice.FromIdAsync(deviceInfo.Id);
+                var device = new Device(this, deviceInfo);
+
+                HandleDiscoveredDevice(device);
+            }
         }
 
         private async void DeviceWatcher_Updated(DeviceWatcher sender, DeviceInformationUpdate deviceInfoUpdate)
         {
-                // Protect against race condition if the task runs after the app stopped the deviceWatcher.
-                if (sender == deviceWatcher)
-                {
-                    var bleDeviceDisplay = FindBluetoothLEDeviceDisplay(deviceInfoUpdate.Id);
-                    if (bleDeviceDisplay != null)
-                    {
-                        bleDeviceDisplay.Update(deviceInfoUpdate);
-                    }
-                }
+            // Protect against race condition if the task runs after the app stopped the deviceWatcher.
+            if (sender == deviceWatcher)
+            {
+                var discovereDevice = DiscoveredDevices.FirstOrDefault(device => ((Device)device).DeviceInformation.Id == deviceInfoUpdate.Id);
+
+                ((Device) discovereDevice)?.DeviceInformation.Update(deviceInfoUpdate);
+            }
         }
 
         private async void DeviceWatcher_Removed(DeviceWatcher sender, DeviceInformationUpdate deviceInfoUpdate)
         {
-                // Protect against race condition if the task runs after the app stopped the deviceWatcher.
-                if (sender == deviceWatcher)
+            // Protect against race condition if the task runs after the app stopped the deviceWatcher.
+            if (sender == deviceWatcher)
+            {
+                var discovereDevice = DiscoveredDevices.FirstOrDefault(device => ((Device)device).DeviceInformation.Id == deviceInfoUpdate.Id);
+
+                if(discovereDevice != null)
+                    HandleDisconnectedDevice(false,discovereDevice);
+                else
                 {
-                    // Find the corresponding DeviceInformation in the collection and remove it.
-                    var bleDeviceDisplay = FindBluetoothLEDeviceDisplay(deviceInfoUpdate.Id);
-                    if (bleDeviceDisplay != null)
-                    {
-                        ResultCollection.Remove(bleDeviceDisplay);
-                    }
+                    //weird   
                 }
+            }
         }
 
         private async void DeviceWatcher_EnumerationCompleted(DeviceWatcher sender, object e)
