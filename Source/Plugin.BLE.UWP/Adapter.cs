@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Plugin.BLE.Abstractions.Contracts;
 using System.Threading;
+using Windows.Devices.Bluetooth;
 using Windows.Devices.Enumeration;
 using Windows.UI.Core;
 
@@ -15,10 +16,16 @@ namespace Plugin.BLE.UWP
     public class Adapter : AdapterBase
     {
         private DeviceWatcher deviceWatcher;
+        private BluetoothAdapter _bluetoothAdapter;
 
         private ObservableCollection<DeviceInformation> ResultCollection = new ObservableCollection<DeviceInformation>();
 
         public override IList<IDevice> ConnectedDevices => throw new NotImplementedException();
+
+        public Adapter(BluetoothAdapter bluetoothAdapter)
+        {
+            _bluetoothAdapter = bluetoothAdapter;
+        }
 
         public override Task<IDevice> ConnectToKnownDeviceAsync(Guid deviceGuid, ConnectParameters connectParameters = default(ConnectParameters), CancellationToken cancellationToken = default(CancellationToken))
         {
@@ -27,7 +34,7 @@ namespace Plugin.BLE.UWP
 
         public override List<IDevice> GetSystemConnectedOrPairedDevices(Guid[] services = null)
         {
-            throw new NotImplementedException();
+            return new List<IDevice>();//todo
         }
 
         protected override Task ConnectToDeviceNativeAsync(IDevice device, ConnectParameters connectParameters, CancellationToken cancellationToken)
