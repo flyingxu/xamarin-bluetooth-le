@@ -1,5 +1,9 @@
-﻿using BLE.Client.ViewModels;
+﻿using Acr.UserDialogs;
+using BLE.Client.ViewModels;
 using MvvmCross.Core.ViewModels;
+using MvvmCross.Platform;
+using Plugin.Permissions;
+using Plugin.Settings;
 
 namespace BLE.Client
 {
@@ -7,6 +11,10 @@ namespace BLE.Client
     {
         public override void Initialize()
         {
+            Mvx.RegisterSingleton<IUserDialogs>(() => UserDialogs.Instance);
+            Mvx.RegisterSingleton(() => CrossSettings.Current);
+            Mvx.RegisterSingleton(() => CrossPermissions.Current);
+
             RegisterAppStart<DeviceListViewModel>();
         }
     }

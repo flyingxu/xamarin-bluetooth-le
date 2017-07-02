@@ -35,14 +35,5 @@ namespace BLE.Client.iOS
             var xamarinFormsApp = new BleMvxFormsApp();
             return new MvxFormsIosPagePresenter(Window, xamarinFormsApp);
         }
-
-        protected override void InitializeIoC()
-        {
-            base.InitializeIoC();
-
-            Mvx.RegisterSingleton(() => UserDialogs.Instance);
-            Mvx.RegisterSingleton(() => CrossSettings.Current);
-            Mvx.RegisterSingleton(() => CrossPermissions.Current);
-        }
     }
 }
