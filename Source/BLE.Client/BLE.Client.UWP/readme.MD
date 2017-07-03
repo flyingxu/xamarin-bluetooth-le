@@ -32,4 +32,8 @@ It's also shared from Android/iOS projects. See the screenshot.
 
 ![BLE.Client.UWP](BLE.Client.UWP.PNG "UWP")
 
+### Reference
+
+https://github.com/Microsoft/Windows-universal-samples/tree/master/Samples/BluetoothLEClient MIT license
+This sample demos almost all Bluetooth LE API. Some of the code is copied to this project.
 

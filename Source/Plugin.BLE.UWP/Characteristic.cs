@@ -1,19 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Devices.Bluetooth.GenericAttributeProfile;
+using Windows.Security.Cryptography;
 using Plugin.BLE.Abstractions;
 using Plugin.BLE.Abstractions.Contracts;
 using Plugin.BLE.Abstractions.EventArgs;
+using Plugin.BLE.Abstractions.Exceptions;
 
 namespace Plugin.BLE.UWP
 {
     public class Characteristic : CharacteristicBase
     {
-        private GattCharacteristic _nativeGattCharacteristic;
+        private readonly GattCharacteristic _nativeGattCharacteristic;
+
         public Characteristic(IService service, GattCharacteristic characteristic) : base(service)
         {
             _nativeGattCharacteristic = characteristic;
@@ -25,8 +29,8 @@ namespace Plugin.BLE.UWP
 
         public override byte[] Value { get; }
 
-        public override CharacteristicPropertyType Properties => CharacteristicPropertyType.Indicate;
-        //    (CharacteristicPropertyType) _nativeGattCharacteristic.CharacteristicProperties;
+        public override CharacteristicPropertyType Properties => 
+            (CharacteristicPropertyType) _nativeGattCharacteristic.CharacteristicProperties;
 
         protected override async Task<IList<IDescriptor>> GetDescriptorsNativeAsync()
         {
@@ -55,9 +59,32 @@ namespace Plugin.BLE.UWP
             return gattCommunicationStatus == GattCommunicationStatus.Success;
         }
 
-        protected override Task StartUpdatesNativeAsync()
+        protected override async Task StartUpdatesNativeAsync()
         {
-            return Task.FromResult(true);
+            _nativeGattCharacteristic.ValueChanged += OnValueChanged;
+
+            var gattcommunicationStatus = await _nativeGattCharacteristic.WriteClientCharacteristicConfigurationDescriptorAsync(
+                GattClientCharacteristicConfigurationDescriptorValue.Notify);
+
+            if(gattcommunicationStatus != GattCommunicationStatus.Success)
+                throw new CharacteristicReadException("Gatt SetCharacteristicNotification FAILED.");
+
+            Trace.Message("StartUpdatesNativeAsync, successful!");
+        }
+
+        private void OnValueChanged(GattCharacteristic sender, GattValueChangedEventArgs args)
+        {
+            if (sender == _nativeGattCharacteristic)
+            {
+                byte[] data;
+                CryptographicBuffer.CopyToByteArray(args.CharacteristicValue, out data);
+
+                Debug.WriteLine(BitConverter.ToString(data));
+
+                ValueUpdated?.Invoke(this, new CharacteristicUpdatedEventArgs(this));
+            }
+
+            Trace.Message("StartUpdatesNativeAsync, successful!");
         }
 
         protected override Task StopUpdatesNativeAsync()
