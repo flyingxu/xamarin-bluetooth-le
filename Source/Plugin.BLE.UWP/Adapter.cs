@@ -10,6 +10,7 @@ using System.Threading;
 using Windows.Devices.Bluetooth;
 using Windows.Devices.Enumeration;
 using Windows.UI.Core;
+using Plugin.BLE.Extensions;
 
 namespace Plugin.BLE.UWP
 {
@@ -24,6 +25,7 @@ namespace Plugin.BLE.UWP
 
         /// <summary>
         /// Used to store all connected devices
+        /// key: Guid in string format.
         /// </summary>
         public Dictionary<string, IDevice> ConnectedDeviceRegistry { get; }
 
@@ -44,9 +46,26 @@ namespace Plugin.BLE.UWP
             return new List<IDevice>();//todo
         }
 
-        protected override Task ConnectToDeviceNativeAsync(IDevice device, ConnectParameters connectParameters, CancellationToken cancellationToken)
+        protected override async Task ConnectToDeviceNativeAsync(IDevice device, ConnectParameters connectParameters, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var connectDevice = (Device)DiscoveredDevices.FirstOrDefault(d => ((Device)d).DeviceInformation.ToGuid() == device.Id);
+
+            if (connectDevice != null)
+            {
+                var bluetoothDevice = await BluetoothLEDevice.FromIdAsync(connectDevice.DeviceInformation.Id);
+
+                if (bluetoothDevice != null)
+                {
+                    connectDevice.SetNativeDevice(bluetoothDevice);
+
+                    ConnectedDeviceRegistry[device.Id.ToString()] = connectDevice;
+                    HandleConnectedDevice(connectDevice);
+                }
+                else
+                {
+                    Trace.Message("Warning: Connect failed");
+                }
+            }
         }
 
         protected override void DisconnectDeviceNative(IDevice device)

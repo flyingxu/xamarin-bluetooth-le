@@ -165,7 +165,9 @@ namespace BLE.Client.ViewModels
             base.Resume();
 
             await GetPreviousGuidAsync();
-            //TryStartScanning();
+            
+            //todo: this is a quick hack for UWP
+            TryStartScanning();
 
             GetSystemConnectedOrPairedDevices();
 

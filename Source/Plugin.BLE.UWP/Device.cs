@@ -7,6 +7,7 @@ using Windows.Devices.Bluetooth;
 using Windows.Devices.Enumeration;
 using Plugin.BLE.Abstractions;
 using Plugin.BLE.Abstractions.Contracts;
+using Plugin.BLE.Extensions;
 
 namespace Plugin.BLE.UWP
 {
@@ -21,11 +22,16 @@ namespace Plugin.BLE.UWP
         {
             DeviceInformation = deviceInformation;
 
-            Id = ParseDeviceId(deviceInformation.Id);
+            Id = deviceInformation.ToGuid();
             Name = deviceInformation.Name;
         }
 
         public override object NativeDevice => _nativeDevice;
+
+        public void SetNativeDevice(BluetoothLEDevice leDevice)
+        {
+            _nativeDevice = leDevice;
+        }
 
         public override Task<bool> UpdateRssiAsync()
         {
@@ -56,20 +62,6 @@ namespace Plugin.BLE.UWP
         protected override async Task<int> RequestMtuNativeAsync(int requestValue)
         {
             return -1;
-        }
-
-        //BluetoothLE#BluetoothLEa4:34:d9:3e:c3:c5-88:0f:10:a2:78:7e
-        private Guid ParseDeviceId(string id)
-        {
-            var deviceGuid = new byte[16];
-            var macWithoutColons = id.Replace("BluetoothLE", String.Empty).Replace("#", String.Empty)
-                .Replace(":", String.Empty).Replace("-", String.Empty);
-            var macBytes = Enumerable.Range(0, macWithoutColons.Length)
-                .Where(x => x % 2 == 0)
-                .Select(x => Convert.ToByte(macWithoutColons.Substring(x, 2), 16))
-                .ToArray();
-            macBytes.CopyTo(deviceGuid, 16-12);
-            return new Guid(deviceGuid);
         }
     }
 }

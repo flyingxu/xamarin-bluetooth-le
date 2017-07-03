@@ -113,6 +113,7 @@
     <Compile Include="BleImplementation.cs" />
     <Compile Include="Device.cs" />
     <Compile Include="Extensions\BluetoothStateExtension.cs" />
+    <Compile Include="Extensions\DeviceInformationExtension.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Properties\Plugin.BLE.UWP.rd.xml" />
   </ItemGroup>
