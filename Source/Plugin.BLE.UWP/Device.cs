@@ -56,7 +56,9 @@ namespace Plugin.BLE.UWP
 
         protected override async Task<IEnumerable<IService>> GetServicesNativeAsync()
         {
-            return new List<IService>();
+            var gattServiceResult = await _nativeDevice.GetGattServicesAsync();
+
+            return gattServiceResult.Services.Select(service => new Service(this, service)).Cast<IService>().ToList();
         }
 
         protected override async Task<int> RequestMtuNativeAsync(int requestValue)

@@ -43,7 +43,7 @@ namespace Plugin.BLE
             _bluetoothAdapter = taskGetAdapter.Result;
 
             //if the system supports bluetooth LE
-            if (_bluetoothAdapter.IsLowEnergySupported)
+            if (_bluetoothAdapter != null && _bluetoothAdapter.IsLowEnergySupported)
             {
                 _bluetoothAdapter.GetRadioAsync().AsTask().ContinueWith(OnRadio);
             }
