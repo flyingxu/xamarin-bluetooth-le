@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26430.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvvmCross.Plugins.BLE", "MvvmCross.Plugins.BLE\MvvmCross.Plugins.BLE.csproj", "{83F1DFFB-A653-45DD-BE81-C02374C6DB07}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -52,9 +52,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".build", ".build", "{BF3073
 	ProjectSection(SolutionItems) = preProject
 		..\.build\build.bat = ..\.build\build.bat
 		..\.build\build.fsx = ..\.build\build.fsx
+		..\doc\changelog.md = ..\doc\changelog.md
 		..\.build\MvvmCross.Plugin.BLE.nuspec = ..\.build\MvvmCross.Plugin.BLE.nuspec
 		..\.build\Plugin.BLE.nuspec = ..\.build\Plugin.BLE.nuspec
-		..\doc\changelog.md = ..\doc\changelog.md
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugin.BLE.Tests", "Plugin.BLE.Tests\Plugin.BLE.Tests.csproj", "{F8374603-78C8-4CB8-A622-EC9226424474}"
@@ -64,6 +64,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugin.BLE.UWP", "Plugin.BLE.UWP\Plugin.BLE.UWP.csproj", "{317732D0-428D-463F-8308-F1507298571C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvvmCross.Plugins.BLE.UWP", "MvvmCross.Plugins.BLE.UWP\MvvmCross.Plugins.BLE.UWP.csproj", "{35305715-7E80-4624-BF7B-86EDF16DDCA5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugin.BLE.Net", "Plugin.BLE.Net\Plugin.BLE.Net.csproj", "{CA3CCA20-651E-472A-91F3-BC1A851230EB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -781,6 +783,54 @@ Global
 		{35305715-7E80-4624-BF7B-86EDF16DDCA5}.Release|x64.Build.0 = Release|x64
 		{35305715-7E80-4624-BF7B-86EDF16DDCA5}.Release|x86.ActiveCfg = Release|x86
 		{35305715-7E80-4624-BF7B-86EDF16DDCA5}.Release|x86.Build.0 = Release|x86
+		{CA3CCA20-651E-472A-91F3-BC1A851230EB}.Ad-Hoc|Any CPU.ActiveCfg = Release|Any CPU
+		{CA3CCA20-651E-472A-91F3-BC1A851230EB}.Ad-Hoc|Any CPU.Build.0 = Release|Any CPU
+		{CA3CCA20-651E-472A-91F3-BC1A851230EB}.Ad-Hoc|ARM.ActiveCfg = Release|Any CPU
+		{CA3CCA20-651E-472A-91F3-BC1A851230EB}.Ad-Hoc|ARM.Build.0 = Release|Any CPU
+		{CA3CCA20-651E-472A-91F3-BC1A851230EB}.Ad-Hoc|iPhone.ActiveCfg = Release|Any CPU
+		{CA3CCA20-651E-472A-91F3-BC1A851230EB}.Ad-Hoc|iPhone.Build.0 = Release|Any CPU
+		{CA3CCA20-651E-472A-91F3-BC1A851230EB}.Ad-Hoc|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{CA3CCA20-651E-472A-91F3-BC1A851230EB}.Ad-Hoc|iPhoneSimulator.Build.0 = Release|Any CPU
+		{CA3CCA20-651E-472A-91F3-BC1A851230EB}.Ad-Hoc|x64.ActiveCfg = Release|Any CPU
+		{CA3CCA20-651E-472A-91F3-BC1A851230EB}.Ad-Hoc|x64.Build.0 = Release|Any CPU
+		{CA3CCA20-651E-472A-91F3-BC1A851230EB}.Ad-Hoc|x86.ActiveCfg = Release|Any CPU
+		{CA3CCA20-651E-472A-91F3-BC1A851230EB}.Ad-Hoc|x86.Build.0 = Release|Any CPU
+		{CA3CCA20-651E-472A-91F3-BC1A851230EB}.AppStore|Any CPU.ActiveCfg = Release|Any CPU
+		{CA3CCA20-651E-472A-91F3-BC1A851230EB}.AppStore|Any CPU.Build.0 = Release|Any CPU
+		{CA3CCA20-651E-472A-91F3-BC1A851230EB}.AppStore|ARM.ActiveCfg = Release|Any CPU
+		{CA3CCA20-651E-472A-91F3-BC1A851230EB}.AppStore|ARM.Build.0 = Release|Any CPU
+		{CA3CCA20-651E-472A-91F3-BC1A851230EB}.AppStore|iPhone.ActiveCfg = Release|Any CPU
+		{CA3CCA20-651E-472A-91F3-BC1A851230EB}.AppStore|iPhone.Build.0 = Release|Any CPU
+		{CA3CCA20-651E-472A-91F3-BC1A851230EB}.AppStore|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{CA3CCA20-651E-472A-91F3-BC1A851230EB}.AppStore|iPhoneSimulator.Build.0 = Release|Any CPU
+		{CA3CCA20-651E-472A-91F3-BC1A851230EB}.AppStore|x64.ActiveCfg = Release|Any CPU
+		{CA3CCA20-651E-472A-91F3-BC1A851230EB}.AppStore|x64.Build.0 = Release|Any CPU
+		{CA3CCA20-651E-472A-91F3-BC1A851230EB}.AppStore|x86.ActiveCfg = Release|Any CPU
+		{CA3CCA20-651E-472A-91F3-BC1A851230EB}.AppStore|x86.Build.0 = Release|Any CPU
+		{CA3CCA20-651E-472A-91F3-BC1A851230EB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CA3CCA20-651E-472A-91F3-BC1A851230EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CA3CCA20-651E-472A-91F3-BC1A851230EB}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{CA3CCA20-651E-472A-91F3-BC1A851230EB}.Debug|ARM.Build.0 = Debug|Any CPU
+		{CA3CCA20-651E-472A-91F3-BC1A851230EB}.Debug|iPhone.ActiveCfg = Debug|Any CPU
+		{CA3CCA20-651E-472A-91F3-BC1A851230EB}.Debug|iPhone.Build.0 = Debug|Any CPU
+		{CA3CCA20-651E-472A-91F3-BC1A851230EB}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{CA3CCA20-651E-472A-91F3-BC1A851230EB}.Debug|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{CA3CCA20-651E-472A-91F3-BC1A851230EB}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{CA3CCA20-651E-472A-91F3-BC1A851230EB}.Debug|x64.Build.0 = Debug|Any CPU
+		{CA3CCA20-651E-472A-91F3-BC1A851230EB}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{CA3CCA20-651E-472A-91F3-BC1A851230EB}.Debug|x86.Build.0 = Debug|Any CPU
+		{CA3CCA20-651E-472A-91F3-BC1A851230EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CA3CCA20-651E-472A-91F3-BC1A851230EB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CA3CCA20-651E-472A-91F3-BC1A851230EB}.Release|ARM.ActiveCfg = Release|Any CPU
+		{CA3CCA20-651E-472A-91F3-BC1A851230EB}.Release|ARM.Build.0 = Release|Any CPU
+		{CA3CCA20-651E-472A-91F3-BC1A851230EB}.Release|iPhone.ActiveCfg = Release|Any CPU
+		{CA3CCA20-651E-472A-91F3-BC1A851230EB}.Release|iPhone.Build.0 = Release|Any CPU
+		{CA3CCA20-651E-472A-91F3-BC1A851230EB}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{CA3CCA20-651E-472A-91F3-BC1A851230EB}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
+		{CA3CCA20-651E-472A-91F3-BC1A851230EB}.Release|x64.ActiveCfg = Release|Any CPU
+		{CA3CCA20-651E-472A-91F3-BC1A851230EB}.Release|x64.Build.0 = Release|Any CPU
+		{CA3CCA20-651E-472A-91F3-BC1A851230EB}.Release|x86.ActiveCfg = Release|Any CPU
+		{CA3CCA20-651E-472A-91F3-BC1A851230EB}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

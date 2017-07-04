@@ -11,6 +11,7 @@ using Plugin.BLE.Abstractions;
 using Plugin.BLE.Abstractions.Contracts;
 using Plugin.BLE.Abstractions.EventArgs;
 using Plugin.BLE.Abstractions.Exceptions;
+using Trace = Plugin.BLE.Abstractions.Trace;
 
 namespace Plugin.BLE.UWP
 {
