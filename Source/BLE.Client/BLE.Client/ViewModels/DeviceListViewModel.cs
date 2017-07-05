@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -69,20 +70,26 @@ namespace BLE.Client.ViewModels
 
 		readonly IPermissions _permissions;
 
-		public DeviceListViewModel(IBluetoothLE bluetoothLe, IAdapter adapter, IUserDialogs userDialogs, ISettings settings, IPermissions permissions) : base(adapter)
+		public DeviceListViewModel(IBluetoothLE bluetoothLe, ISettings settings) : base(null)
         {
-			_permissions = permissions;
 			_bluetoothLe = bluetoothLe;
-            _userDialogs = userDialogs;
-            _settings = settings;
-            // quick and dirty :>
             _bluetoothLe.StateChanged += OnStateChanged;
-            Adapter.DeviceDiscovered += OnDeviceDiscovered;
-            Adapter.ScanTimeoutElapsed += Adapter_ScanTimeoutElapsed;
-            Adapter.DeviceDisconnected += OnDeviceDisconnected;
-            Adapter.DeviceConnectionLost += OnDeviceConnectionLost;
-			//Adapter.DeviceConnected += (sender, e) => Adapter.DisconnectDeviceAsync(e.Device);
 
+            try
+            {
+                //these 2 packages are not available in WPF client.
+                var userDialogs = Mvx.Resolve<IUserDialogs>();
+                _userDialogs = userDialogs;
+
+                IPermissions permissions = Mvx.Resolve<IPermissions>();
+			    _permissions = permissions;
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e);
+            }
+
+            _settings = settings;
         }
 
         private Task GetPreviousGuidAsync()
@@ -104,6 +111,16 @@ namespace BLE.Client.ViewModels
 
         private void OnStateChanged(object sender, BluetoothStateChangedArgs e)
         {
+            //UWP check Adapter is available now
+            Adapter = _bluetoothLe.Adapter;
+            
+            // quick and dirty :>
+            Adapter.DeviceDiscovered += OnDeviceDiscovered;
+            Adapter.ScanTimeoutElapsed += Adapter_ScanTimeoutElapsed;
+            Adapter.DeviceDisconnected += OnDeviceDisconnected;
+            Adapter.DeviceConnectionLost += OnDeviceConnectionLost;
+            //Adapter.DeviceConnected += (sender, e) => Adapter.DisconnectDeviceAsync(e.Device);
+
             RaisePropertyChanged(nameof(IsStateOn));
             RaisePropertyChanged(nameof(StateText));
             //TryStartScanning();
@@ -207,21 +224,28 @@ namespace BLE.Client.ViewModels
 
         private async void TryStartScanning(bool refresh = false)
         {
-			if (Xamarin.Forms.Device.OS == Xamarin.Forms.TargetPlatform.Android)
-			{
-				var status = await _permissions.CheckPermissionStatusAsync(Permission.Location);
-				if (status != PermissionStatus.Granted)
-				{
-					var permissionResult = await _permissions.RequestPermissionsAsync(Permission.Location);
+            try
+            {
+                //in WPF, Xamarin.Forms is not initialized.
+                if (Xamarin.Forms.Device.OS == Xamarin.Forms.TargetPlatform.Android)
+			    {
+				    var status = await _permissions.CheckPermissionStatusAsync(Permission.Location);
+				    if (status != PermissionStatus.Granted)
+				    {
+					    var permissionResult = await _permissions.RequestPermissionsAsync(Permission.Location);
 
-					if (permissionResult.First().Value != PermissionStatus.Granted)
-					{
-						_userDialogs.ShowError("Permission denied. Not scanning.");
-						return;
-					}
-				}
-			}
-			
+					    if (permissionResult.First().Value != PermissionStatus.Granted)
+					    {
+						    _userDialogs.ShowError("Permission denied. Not scanning.");
+						    return;
+					    }
+				    }
+                }
+            }
+            catch (Exception)
+            {
+            }
+
             if (IsStateOn && (refresh || !Devices.Any()) && !IsRefreshing)
             {
                 ScanForDevices();
