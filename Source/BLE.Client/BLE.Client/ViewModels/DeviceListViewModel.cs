@@ -105,8 +105,8 @@ namespace BLE.Client.ViewModels
         {
             Devices.FirstOrDefault(d => d.Id == e.Device.Id)?.Update();
 
-            _userDialogs.HideLoading();
-            _userDialogs.ErrorToast("Error", $"Connection LOST {e.Device.Name}", TimeSpan.FromMilliseconds(6000));
+            _userDialogs?.HideLoading();
+            _userDialogs?.ErrorToast("Error", $"Connection LOST {e.Device.Name}", TimeSpan.FromMilliseconds(6000));
         }
 
         private void OnStateChanged(object sender, BluetoothStateChangedArgs e)
@@ -324,7 +324,7 @@ namespace BLE.Client.ViewModels
             //    return true;
             //}
 
-            if (showPrompt && !await _userDialogs.ConfirmAsync($"Connect to device '{device.Name}'?"))
+            if (showPrompt && _userDialogs != null && !await _userDialogs.ConfirmAsync($"Connect to device '{device.Name}'?"))
             {
                 return false;
             }
@@ -340,14 +340,19 @@ namespace BLE.Client.ViewModels
                     OnCancel = tokenSource.Cancel
                 };
 
-                using (var progress = _userDialogs.Progress(config))
+                if (_userDialogs != null)
                 {
-                    progress.Show();
+                    using (var progress = _userDialogs.Progress(config))
+                    {
+                        progress.Show();
 
-                    await Adapter.ConnectToDeviceAsync(device.Device, new ConnectParameters(forceBleTransport: false), tokenSource.Token);
+                        await Adapter.ConnectToDeviceAsync(device.Device, new ConnectParameters(forceBleTransport: false), tokenSource.Token);
+                    }
+
+                    _userDialogs.ShowSuccess($"Connected to {device.Device.Name}.");
                 }
-
-                _userDialogs.ShowSuccess($"Connected to {device.Device.Name}.");
+                else
+                    await Adapter.ConnectToDeviceAsync(device.Device, new ConnectParameters(forceBleTransport: false), tokenSource.Token);
 
                 PreviousGuid = device.Device.Id;
 				return true;
