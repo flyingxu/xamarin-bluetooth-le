@@ -10,7 +10,7 @@ namespace BLE.Client.ViewModels
 {
     public class BaseViewModel : MvxViewModel
     {
-        protected IAdapter Adapter;     //in UWP, Adapter is get async-ly
+        protected IAdapter Adapter;     //in UWP, Adapter is get async-ly. I will be updated when the Adapter is ready.
 
         protected const string DeviceIdKey = "DeviceIdNavigationKey";
         protected const string ServiceIdKey = "ServiceIdNavigationKey";
