@@ -1,0 +1,40 @@
+﻿<views:MvxWpfView x:Class="BLE.Client.Wpf.Views.DeviceListView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:BLE.Client.Wpf.Views"
+             xmlns:views="clr-namespace:MvvmCross.Wpf.Views;assembly=MvvmCross.Wpf"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <views:MvxWpfView.Resources>
+        <DataTemplate x:Key="DeviceItemTemplate">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <StackPanel Orientation="Vertical">
+                    <Label Content="{Binding Name}"  />
+                    <Label Content="{Binding Id}"/>
+                </StackPanel>
+                <Label Grid.Column="1"
+                       Margin="10"
+                       Content="{Binding Rssi}"></Label>
+            </Grid>
+        </DataTemplate>
+    </views:MvxWpfView.Resources>
+    <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+            </Grid.RowDefinitions>
+
+            <ListView Grid.Row="0" ItemsSource="{Binding Devices}" SelectedItem="{Binding SelectedDevice, Mode=TwoWay}"
+                      ItemTemplate="{StaticResource DeviceItemTemplate}">
+            </ListView>
+            <Button Grid.Row="2" Command="{Binding RefreshCommand}">Refresh</Button>
+    </Grid>
+</views:MvxWpfView>

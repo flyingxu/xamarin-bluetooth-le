@@ -93,9 +93,9 @@
       <Project>{f479f7db-cfa6-49e5-aa41-4fe6a4da39b0}</Project>
       <Name>Plugin.BLE.Abstractions</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Plugin.BLE.Net\Plugin.BLE.Net.csproj">
+    <ProjectReference Include="..\Plugin.BLE.Wpf\Plugin.BLE.Wpf.csproj">
       <Project>{ca3cca20-651e-472a-91f3-bc1a851230eb}</Project>
-      <Name>Plugin.BLE.Net</Name>
+      <Name>Plugin.BLE.Wpf</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
