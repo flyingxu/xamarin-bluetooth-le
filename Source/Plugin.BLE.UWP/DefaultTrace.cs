@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MvvmCross.Platform;
 using Plugin.BLE.Abstractions;
 
 namespace Plugin.BLE.UWP
@@ -12,7 +13,7 @@ namespace Plugin.BLE.UWP
     {
         static DefaultTrace()
         {
-            //Trace.TraceImplementation = Debug.WriteLine;
+            Trace.TraceImplementation = Mvx.Trace;
         }
     }
 }

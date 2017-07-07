@@ -17,7 +17,8 @@ namespace Plugin.BLE.UWP
     public class Characteristic : CharacteristicBase
     {
         private readonly GattCharacteristic _nativeGattCharacteristic;
-
+        private byte[] _changedData;
+        
         public Characteristic(IService service, GattCharacteristic characteristic) : base(service)
         {
             _nativeGattCharacteristic = characteristic;
@@ -27,7 +28,7 @@ namespace Plugin.BLE.UWP
         public override Guid Id => _nativeGattCharacteristic.Uuid;
         public override string Uuid => _nativeGattCharacteristic.Uuid.ToString();
 
-        public override byte[] Value { get; }
+        public override byte[] Value => _changedData;
 
         public override CharacteristicPropertyType Properties => 
             (CharacteristicPropertyType) _nativeGattCharacteristic.CharacteristicProperties;
@@ -64,7 +65,7 @@ namespace Plugin.BLE.UWP
             _nativeGattCharacteristic.ValueChanged += OnValueChanged;
 
             var gattcommunicationStatus = await _nativeGattCharacteristic.WriteClientCharacteristicConfigurationDescriptorAsync(
-                GattClientCharacteristicConfigurationDescriptorValue.Notify);
+                GattClientCharacteristicConfigurationDescriptorValue.Indicate);
 
             if(gattcommunicationStatus != GattCommunicationStatus.Success)
                 throw new CharacteristicReadException("Gatt SetCharacteristicNotification FAILED.");
@@ -76,15 +77,14 @@ namespace Plugin.BLE.UWP
         {
             if (sender == _nativeGattCharacteristic)
             {
-                byte[] data;
-                CryptographicBuffer.CopyToByteArray(args.CharacteristicValue, out data);
+                CryptographicBuffer.CopyToByteArray(args.CharacteristicValue, out _changedData);
 
-                Debug.WriteLine(BitConverter.ToString(data));
+                Debug.WriteLine(BitConverter.ToString(_changedData));
 
                 ValueUpdated?.Invoke(this, new CharacteristicUpdatedEventArgs(this));
             }
 
-            Trace.Message("StartUpdatesNativeAsync, successful!");
+            Trace.Message("OnValueChanged, successful!");
         }
 
         protected override Task StopUpdatesNativeAsync()

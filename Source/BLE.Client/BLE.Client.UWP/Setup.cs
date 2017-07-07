@@ -7,6 +7,7 @@ using MvvmCross.Uwp.Platform;
 using MvvmCross.Uwp.Views;
 using BLE.Client;
 using MvvmCross.Core.Views;
+using MvvmCross.Platform.Platform;
 
 namespace BLE.Client.UWP
 {
@@ -33,6 +34,11 @@ namespace BLE.Client.UWP
 
             return presenter;
             //return base.CreateViewPresenter(rootFrame);
+        }
+
+        protected override IMvxTrace CreateDebugTrace()
+        {
+            return new DebugTrace();
         }
     }
 }

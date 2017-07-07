@@ -35,7 +35,6 @@ namespace Plugin.BLE.UWP
             AdvertisementRecords = new List<AdvertisementRecord>();
             foreach (var dataSection in dataSections)
             {
-                Debug.WriteLine($"({dataSection.DataType} : {BitConverter.ToString(dataSection.Data.ToArray())})");
                 AdvertisementRecords.Add(new AdvertisementRecord((AdvertisementRecordType)dataSection.DataType, dataSection.Data.ToArray()));
             }
 

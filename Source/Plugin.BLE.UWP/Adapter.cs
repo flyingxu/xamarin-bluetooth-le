@@ -127,11 +127,6 @@ namespace Plugin.BLE.UWP
                 {
                     var localName = args.Advertisement.LocalName;
 
-                    foreach (var serviceUuid in args.Advertisement.ServiceUuids)
-                    {
-                        Debug.WriteLine(serviceUuid);
-                    }
-
                     var device = new Device(this, localName, args.BluetoothAddress, args.Advertisement.DataSections, args.RawSignalStrengthInDBm);
                     HandleDiscoveredDevice(device);
                 }
@@ -162,13 +157,6 @@ namespace Plugin.BLE.UWP
             if (sender == deviceWatcher)
             {
                 var properties = deviceInfo.Properties;
-                if (properties.Count > 0)
-                {
-                    foreach (var keyValuePair in properties)
-                    {
-                        Debug.WriteLine($"{keyValuePair.Key} : {keyValuePair.Value}");
-                    }
-                }
 
             }
         }
