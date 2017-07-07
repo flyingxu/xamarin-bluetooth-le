@@ -2,12 +2,15 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
 using Plugin.BLE.Abstractions.Contracts;
 using System.Threading;
 using Windows.Devices.Bluetooth;
+using Windows.Devices.Bluetooth.Advertisement;
 using Windows.Devices.Enumeration;
 using Windows.UI.Core;
 using Plugin.BLE.Extensions;
@@ -17,6 +20,10 @@ namespace Plugin.BLE.UWP
     public class Adapter : AdapterBase
     {
         private DeviceWatcher deviceWatcher;
+        
+        // The Bluetooth LE advertisement watcher class is used to control and customize Bluetooth LE scanning.
+        private BluetoothLEAdvertisementWatcher watcher;
+
         private BluetoothAdapter _bluetoothAdapter;
 
         private ObservableCollection<DeviceInformation> ResultCollection = new ObservableCollection<DeviceInformation>();
@@ -48,11 +55,11 @@ namespace Plugin.BLE.UWP
 
         protected override async Task ConnectToDeviceNativeAsync(IDevice device, ConnectParameters connectParameters, CancellationToken cancellationToken)
         {
-            var connectDevice = (Device)DiscoveredDevices.FirstOrDefault(d => ((Device)d).DeviceInformation.ToGuid() == device.Id);
+            var connectDevice = (Device) device;
 
             if (connectDevice != null)
             {
-                var bluetoothDevice = await BluetoothLEDevice.FromIdAsync(connectDevice.DeviceInformation.Id);
+                var bluetoothDevice = await BluetoothLEDevice.FromBluetoothAddressAsync(connectDevice.BluetoothAddress);
 
                 if (bluetoothDevice != null)
                 {
@@ -98,7 +105,37 @@ namespace Plugin.BLE.UWP
             // Start the watcher.
             deviceWatcher.Start();
 
+            //advertisement
+            watcher = new BluetoothLEAdvertisementWatcher();
+            watcher.Received += WatcherOnReceived;
+            watcher.Stopped += WatcherOnStopped;
+            watcher.Start();
+
             return Task.FromResult(true);
+        }
+
+        private void WatcherOnStopped(BluetoothLEAdvertisementWatcher sender, BluetoothLEAdvertisementWatcherStoppedEventArgs args)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void WatcherOnReceived(BluetoothLEAdvertisementWatcher sender, BluetoothLEAdvertisementReceivedEventArgs args)
+        {
+            if (sender == watcher)
+            {
+                if(args.AdvertisementType == BluetoothLEAdvertisementType.ConnectableUndirected)
+                {
+                    var localName = args.Advertisement.LocalName;
+
+                    foreach (var serviceUuid in args.Advertisement.ServiceUuids)
+                    {
+                        Debug.WriteLine(serviceUuid);
+                    }
+
+                    var device = new Device(this, localName, args.BluetoothAddress, args.Advertisement.DataSections, args.RawSignalStrengthInDBm);
+                    HandleDiscoveredDevice(device);
+                }
+            }
         }
 
         protected override void StopScanNative()
@@ -124,10 +161,15 @@ namespace Plugin.BLE.UWP
             // Protect against race condition if the task runs after the app stopped the deviceWatcher.
             if (sender == deviceWatcher)
             {
-                //var bluetoothDevice = await BluetoothLEDevice.FromIdAsync(deviceInfo.Id);
-                var device = new Device(this, deviceInfo);
+                var properties = deviceInfo.Properties;
+                if (properties.Count > 0)
+                {
+                    foreach (var keyValuePair in properties)
+                    {
+                        Debug.WriteLine($"{keyValuePair.Key} : {keyValuePair.Value}");
+                    }
+                }
 
-                HandleDiscoveredDevice(device);
             }
         }
 
@@ -136,9 +178,9 @@ namespace Plugin.BLE.UWP
             // Protect against race condition if the task runs after the app stopped the deviceWatcher.
             if (sender == deviceWatcher)
             {
-                var discovereDevice = DiscoveredDevices.FirstOrDefault(device => ((Device)device).DeviceInformation.Id == deviceInfoUpdate.Id);
+                //var discovereDevice = DiscoveredDevices.FirstOrDefault(device => ((Device)device).DeviceInformation.Id == deviceInfoUpdate.Id);
 
-                ((Device) discovereDevice)?.DeviceInformation.Update(deviceInfoUpdate);
+                //((Device) discovereDevice)?.DeviceInformation.Update(deviceInfoUpdate);
             }
         }
 
@@ -147,11 +189,11 @@ namespace Plugin.BLE.UWP
             // Protect against race condition if the task runs after the app stopped the deviceWatcher.
             if (sender == deviceWatcher)
             {
-                var discovereDevice = DiscoveredDevices.FirstOrDefault(device => ((Device)device).DeviceInformation.Id == deviceInfoUpdate.Id);
+                //var discovereDevice = DiscoveredDevices.FirstOrDefault(device => ((Device)device).DeviceInformation.Id == deviceInfoUpdate.Id);
 
-                if(discovereDevice != null)
-                    HandleDisconnectedDevice(false,discovereDevice);
-                else
+                //if(discovereDevice != null)
+                //    HandleDisconnectedDevice(false,discovereDevice);
+               // else
                 {
                     //weird   
                 }

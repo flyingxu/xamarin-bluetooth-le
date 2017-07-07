@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Devices.Bluetooth;
+using Windows.Devices.Bluetooth.Advertisement;
 using Windows.Devices.Enumeration;
 using Plugin.BLE.Abstractions;
 using Plugin.BLE.Abstractions.Contracts;
@@ -12,19 +15,34 @@ using Plugin.BLE.Extensions;
 namespace Plugin.BLE.UWP
 {
     public class Device : DeviceBase
-    {
+    {     
         private BluetoothLEDevice _nativeDevice;        //valid after connection
 
-        public DeviceInformation DeviceInformation;   //valid before connection
-
-        public Device(IAdapter adapter, DeviceInformation deviceInformation) 
+        public Device(IAdapter adapter, string name, ulong bluetoothAddress, IList<BluetoothLEAdvertisementDataSection> dataSections, int rssi) 
             : base(adapter)
         {
-            DeviceInformation = deviceInformation;
+            Name = name;
 
-            Id = deviceInformation.ToGuid();
-            Name = deviceInformation.Name;
+            BluetoothAddress = bluetoothAddress;
+            Id = new Guid(0,0,0,0,0,
+                (byte)(bluetoothAddress >> 40),
+                (byte)(bluetoothAddress >> 32),
+                (byte)(bluetoothAddress >> 24),
+                (byte)(bluetoothAddress >> 16),
+                (byte)(bluetoothAddress >> 8),
+                (byte)bluetoothAddress);
+
+            AdvertisementRecords = new List<AdvertisementRecord>();
+            foreach (var dataSection in dataSections)
+            {
+                Debug.WriteLine($"({dataSection.DataType} : {BitConverter.ToString(dataSection.Data.ToArray())})");
+                AdvertisementRecords.Add(new AdvertisementRecord((AdvertisementRecordType)dataSection.DataType, dataSection.Data.ToArray()));
+            }
+
+            Rssi = rssi;
         }
+
+        public ulong BluetoothAddress { get; }
 
         public override object NativeDevice => _nativeDevice;
 
