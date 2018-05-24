@@ -2,6 +2,19 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <Version>2.0.0-beta.1</Version>
+    <Authors>Adrian Seceleanu, Sven-Michael Stübe</Authors>
+    <Product>Bluetooth LE Plugin for Xamarin</Product>
+    <Description>Xamarin plugin to access Bluetooth Low Energy functionality on Android and iOS.
+Read the full documentation on the projects page.</Description>
+    <PackageLicenseUrl>http://www.apache.org/licenses/LICENSE-2.0</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/xabre/xamarin-bluetooth-le</PackageProjectUrl>
+    <PackageIconUrl>https://raw.githubusercontent.com/xabre/xamarin-bluetooth-le/master/icon_small.png</PackageIconUrl>
+    <RepositoryUrl>https://github.com/xabre/xamarin-bluetooth-le</RepositoryUrl>
+    <PackageTags>xamarin monodroid Xamarin.iOS bluetooth BLE LE BTLE Smart xamarin.forms ios android forms xamarinforms</PackageTags>
+    <PackageReleaseNotes>[2.0.0] (beta.1)
+Supports Netstandard 2</PackageReleaseNotes>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
 </Project>
