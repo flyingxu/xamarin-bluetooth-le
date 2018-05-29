@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Plugin.BLE.Abstractions.Contracts;
 using Plugin.BLE.iOS;
 
@@ -16,9 +17,9 @@ namespace PluginNugetTest.iOS
             device.UpdateRssiAsync();
         }
 
-        public void CheckMyCharacteristic(ICharacteristic characteristic)
+        public async Task CheckMyCharacteristic(ICharacteristic characteristic)
         {
-            characteristic.StartUpdates();
+            await characteristic.StartUpdatesAsync();
         }
 
         public void CheckMyService(IService service)
@@ -36,9 +37,9 @@ namespace PluginNugetTest.iOS
             await device.UpdateRssiAsync();
         }
 
-        public void CheckMyCharacteristic(Characteristic characteristic)
+        public async Task CheckMyCharacteristic(Characteristic characteristic)
         {
-            characteristic.StartUpdates();
+            await characteristic.StartUpdatesAsync();
         }
 
         public async void CheckMyService(Service service)

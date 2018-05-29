@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Plugin.BLE.Abstractions.Contracts;
 using Plugin.BLE.Android;
 using IAdapter = Plugin.BLE.Abstractions.Contracts.IAdapter;
@@ -17,9 +18,9 @@ namespace PluginNugetTest.Android
             device.UpdateRssiAsync();
         }
 
-        public void CheckMyCharacteristic(ICharacteristic characteristic)
+        public async Task CheckMyCharacteristic(ICharacteristic characteristic)
         {
-            characteristic.StartUpdates();
+            await characteristic.StartUpdatesAsync();
         }
 
         public void CheckMyService(IService service)
@@ -37,9 +38,9 @@ namespace PluginNugetTest.Android
             await device.UpdateRssiAsync();
         }
 
-        public void CheckMyCharacteristic(Characteristic characteristic)
+        public async Task CheckMyCharacteristic(Characteristic characteristic)
         {
-            characteristic.StartUpdates();
+            await characteristic.StartUpdatesAsync();
         }
 
         public async void CheckMyService(Service service)

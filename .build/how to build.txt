@@ -1,0 +1,14 @@
+1) use nuget.exe to install FAKE.exe
+You can run build.sh or 
+
+on Windows:
+Open a cmd console windows and cd to the folder of "xamarin-bluetooth-le\.build":
+"../Source/.nuget/nuget.exe" install FAKE -Version 4.62.5
+
+Then 
+
+"FAKE.4.62.5/tools/FAKE.exe" build.fsx
+
+copy nuspec files to out\lib:
+
+xamarin-bluetooth-le\.build\nuget pack MvvmCross.Plugin.BLE.nuspec -BasePath out\lib\

@@ -37,25 +37,20 @@
   <ItemGroup>
     <Reference Include="Mono.Android" />
     <Reference Include="mscorlib" />
-    <Reference Include="MvvmCross.Platform, Version=4.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\MvvmCross.Platform.4.1.0\lib\MonoAndroid\MvvmCross.Platform.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="MvvmCross, Version=6.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MvvmCross.6.0.0\lib\netstandard2.0\MvvmCross.dll</HintPath>
     </Reference>
-    <Reference Include="MvvmCross.Platform.Droid, Version=4.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\MvvmCross.Platform.4.1.0\lib\MonoAndroid\MvvmCross.Platform.Droid.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="MvvmCross.Plugins.BLE, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MvvmCross.Plugin.BLE.2.0.0-pre2\lib\MonoAndroid\MvvmCross.Plugins.BLE.dll</HintPath>
     </Reference>
-    <Reference Include="MvvmCross.Plugins.BLE">
-      <HintPath>..\packages\MvvmCross.Plugin.BLE.1.0.0-beta5\lib\MonoAndroid\MvvmCross.Plugins.BLE.dll</HintPath>
+    <Reference Include="MvvmCross.Plugins.BLE.Droid, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MvvmCross.Plugin.BLE.2.0.0-pre2\lib\MonoAndroid\MvvmCross.Plugins.BLE.Droid.dll</HintPath>
     </Reference>
-    <Reference Include="MvvmCross.Plugins.BLE.Droid">
-      <HintPath>..\packages\MvvmCross.Plugin.BLE.1.0.0-beta5\lib\MonoAndroid\MvvmCross.Plugins.BLE.Droid.dll</HintPath>
+    <Reference Include="Plugin.BLE, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Plugin.BLE.2.0.0-pre1\lib\MonoAndroid\Plugin.BLE.dll</HintPath>
     </Reference>
-    <Reference Include="Plugin.BLE">
-      <HintPath>..\packages\Plugin.BLE.1.0.0-beta5\lib\MonoAndroid\Plugin.BLE.dll</HintPath>
-    </Reference>
-    <Reference Include="Plugin.BLE.Abstractions">
-      <HintPath>..\packages\Plugin.BLE.1.0.0-beta5\lib\MonoAndroid\Plugin.BLE.Abstractions.dll</HintPath>
+    <Reference Include="Plugin.BLE.Abstractions, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Plugin.BLE.2.0.0-pre1\lib\MonoAndroid\Plugin.BLE.Abstractions.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -66,7 +61,6 @@
     <Compile Include="..\PluginNugetTest.Android\CompilerPleaseCheck.cs">
       <Link>CompilerPleaseCheck.cs</Link>
     </Compile>
-    <Compile Include="Bootstrap\BlePluginBootstrap.cs" />
     <Compile Include="Class1.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
