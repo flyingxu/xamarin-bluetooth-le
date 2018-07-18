@@ -267,6 +267,8 @@ The BLE API implementation (especially on **Android**) has the following limitat
 
 2) pack the nuget
 
+    Open a cmd console windows and cd to the folder of "xamarin-bluetooth-le\\.build", then run
+
     `nuget pack Plugin.BLE.nuspec -BasePath out\lib\`
     
     `nuget pack MvvmCross.Plugin.BLE.nuspec -BasePath out\lib\`

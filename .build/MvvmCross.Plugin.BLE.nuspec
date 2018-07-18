@@ -1,7 +1,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>MvvmCross.Plugin.BLE</id>
-    <version>2.0.0-pre2</version>
+    <version>2.0.0-pre3</version>
     <title>Bluetooth LE Plugin for MvvmCross</title>
     <authors>Adrian Seceleanu, Sven-Michael Stübe</authors>
     <owners>Adrian Seceleanu, Sven-Michael Stübe</owners>
@@ -41,19 +41,19 @@
     </releaseNotes>
     <dependencies>
       <group targetFramework="net">
-        <dependency id="MvvmCross.Platform" version="4.1.0" />
+		<dependency id="MvvmCross" version="[6.0.0,)" />
         <dependency id="Plugin.BLE" version="[2.0.0-pre1]" />
       </group>
       <group targetFramework="win">
-        <dependency id="MvvmCross.Platform" version="4.1.0" />
+		<dependency id="MvvmCross" version="[6.0.0,)" />
         <dependency id="Plugin.BLE" version="[2.0.0-pre1]" />
       </group>
       <group targetFramework="wp">
-        <dependency id="MvvmCross.Platform" version="4.1.0" />
+        <dependency id="MvvmCross" version="[6.0.0,)" />
         <dependency id="Plugin.BLE" version="[2.0.0-pre1]" />
       </group>
       <group targetFramework="wpa">
-        <dependency id="MvvmCross.Platform" version="4.1.0" />
+        <dependency id="MvvmCross" version="[6.0.0,)" />
         <dependency id="Plugin.BLE" version="[2.0.0-pre1]" />
       </group>
       <group targetFramework="netstandard1.0">
@@ -61,34 +61,34 @@
         <dependency id="Plugin.BLE" version="[2.0.0-pre1]" />
       </group>
       <group targetFramework="MonoAndroid">
-        <dependency id="MvvmCross.Platform" version="6.0.0" />
+        <dependency id="MvvmCross" version="[6.0.0,)" />
         <dependency id="Plugin.BLE" version="[2.0.0-pre1]" />
       </group>
       <group targetFramework="Xamarin.iOS10">
-        <dependency id="MvvmCross.Platform" version="6.0.0" />
+        <dependency id="MvvmCross" version="[6.0.0,)" />
         <dependency id="Plugin.BLE" version="[2.0.0-pre1]" />
       </group>
       <group targetFramework="Xamarin.Mac20">
-        <dependency id="MvvmCross.Platform" version="4.1.0" />
+        <dependency id="MvvmCross" version="[6.0.0,)" />
         <dependency id="Plugin.BLE" version="[2.0.0-pre1]" />
       </group>
       <group targetFramework="portable-net45+win8+wpa81+wp8">
         <dependency id="Plugin.BLE" version="[2.0.0-pre1]" />
       </group>
       <group targetFramework="uap">
-        <dependency id="MvvmCross.Platform" version="4.1.0" />
+        <dependency id="MvvmCross" version="[6.0.0,)" />
         <dependency id="Plugin.BLE" version="[2.0.0-pre1]" />
       </group>
       <group targetFramework="dotnet">
-        <dependency id="MvvmCross.Platform" version="4.1.0" />
+        <dependency id="MvvmCross" version="[6.0.0,)" />
         <dependency id="Plugin.BLE" version="[2.0.0-pre1]" />
       </group>
       <group targetFramework="xamarintvos">
-        <dependency id="MvvmCross.Platform" version="4.1.0" />
+        <dependency id="MvvmCross" version="[6.0.0,)" />
         <dependency id="Plugin.BLE" version="[2.0.0-pre1]" />
       </group>
       <group targetFramework="xamarinwatchos">
-        <dependency id="MvvmCross.Platform" version="4.1.0" />
+        <dependency id="MvvmCross" version="[6.0.0,)" />
         <dependency id="Plugin.BLE" version="[2.0.0-pre1]" />
       </group>
     </dependencies>
